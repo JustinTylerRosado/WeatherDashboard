@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 
 import weatherRoutes from './routes/api/weatherRoutes.js';
 import htmlRoutes from './routes/htmlRoutes.js';
@@ -16,7 +17,14 @@ app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, '../../client/dist')));
+const clientBuildPath = path.join(__dirname, '../../client/dist');
+
+app.use(express.static(clientBuildPath));
+
+app.get('*', (_req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+
 app.use('/api/weather', weatherRoutes);
 app.use('/', htmlRoutes);
 
